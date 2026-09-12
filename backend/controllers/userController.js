@@ -1,0 +1,3 @@
+const User=require('../models/User');
+exports.getProfile=async(req,res)=>{try{const user=await User.findById(req.userId).select('-password');if(!user)return res.status(404).json({message:'User not found'});res.json(user);}catch(e){res.status(500).json({message:'Could not load profile',error:e.message});}};
+exports.updateProfile=async(req,res)=>{try{const allowed=['name','mobile','gender','age','height','weight','fitnessGoal'];const data={};for(const k of allowed)if(req.body[k]!==undefined)data[k]=req.body[k];const user=await User.findByIdAndUpdate(req.userId,data,{new:true,runValidators:true}).select('-password');res.json(user);}catch(e){res.status(400).json({message:'Could not update profile',error:e.message});}};
