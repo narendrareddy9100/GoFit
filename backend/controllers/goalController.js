@@ -1,0 +1,5 @@
+const Goal=require('../models/Goal');
+exports.create=async(req,res)=>{try{const g=await Goal.create({...req.body,userId:req.userId});res.status(201).json(g);}catch(e){res.status(400).json({message:'Could not create goal',error:e.message});}};
+exports.list=async(req,res)=>{try{res.json(await Goal.find({userId:req.userId}).sort({createdAt:-1}));}catch(e){res.status(500).json({message:e.message});}};
+exports.update=async(req,res)=>{try{const g=await Goal.findOneAndUpdate({_id:req.params.id,userId:req.userId},{type:req.body.type,target:req.body.target,progress:req.body.progress},{new:true,runValidators:true});if(!g)return res.status(404).json({message:'Goal not found'});res.json(g);}catch(e){res.status(400).json({message:e.message});}};
+exports.remove=async(req,res)=>{try{const g=await Goal.findOneAndDelete({_id:req.params.id,userId:req.userId});if(!g)return res.status(404).json({message:'Goal not found'});res.json({message:'Goal deleted'});}catch(e){res.status(500).json({message:e.message});}};
